@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+xhost +
+exec docker run  -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/Pictures/:/data -e DISPLAY=$DISPLAY darktable
