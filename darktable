@@ -1,6 +1,17 @@
 #!/bin/bash
 
 set -e
+set -x
+
+name=darktable_container
 
 xhost +
-exec docker run  -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/Pictures/:/data -e DISPLAY=$DISPLAY darktable
+
+# only create the container once, then keep using it in subsequent invocations
+# this allows darktable to pick up where it left off, plus allows you to save config
+
+if [ -z "$(docker ps -a --filter "name=^/$name$" --format '{{.Names}}')" ]; then
+    exec docker run --name="$name" -ti -v /tmp/.X11-unix:/tmp/.X11-unix -v $HOME/Pictures:/data -e DISPLAY=$DISPLAY darktable
+fi
+
+exec docker start -i -a "$name"
